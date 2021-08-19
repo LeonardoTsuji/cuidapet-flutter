@@ -1,6 +1,10 @@
+import 'package:cuidapet/app/core/exceptions/cuidapet_exceptions.dart';
+import 'package:cuidapet/app/repository/facebook_repository.dart';
 import 'package:cuidapet/app/repository/secure_storage_repository.dart';
 import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:cuidapet/app/repository/usuario_repository.dart';
+import 'package:cuidapet/app/models/access_token_model.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 
@@ -9,25 +13,56 @@ class UsuarioService {
 
   UsuarioService(this._usuarioRepository);
 
-  Future<void> login(String email,
-      {String? password, bool facebookLogin = false, String? avatar}) async {
+  Future<void> login(
+    bool facebookLogin, {
+    String? email,
+    String? password,
+  }) async {
     try {
-      final acessTokenModel = await _usuarioRepository.login(email,
-          password: password, facebookLogin: facebookLogin, avatar: avatar);
       final prefs = await SharedPrefsRepository.instance;
+      final firebaseAuth = FirebaseAuth.instance;
+      AccessTokenModel acessTokenModel;
 
       if (!facebookLogin) {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: email, password: password != null ? password : '');
+        acessTokenModel = await _usuarioRepository.login(facebookLogin,
+            email: email, password: password, avatar: '');
+        await firebaseAuth.signInWithEmailAndPassword(
+            email: email ?? '', password: password != null ? password : '');
         prefs.registerAccessToken(acessTokenModel.accessToken ?? '');
-      } else {}
+      } else {
+        try {
+          var facebookModel = await FacebookRepository().login();
+          if (facebookModel != null) {
+            acessTokenModel = await _usuarioRepository.login(facebookLogin,
+                email: facebookModel.email,
+                password: password,
+                avatar: facebookModel.picture);
+            final facebookCredential =
+                FacebookAuthProvider.credential(facebookModel.token ?? '');
+            await firebaseAuth.signInWithCredential(facebookCredential);
+          } else {
+            print('Erro');
+          }
+        } on DioError catch (e) {
+          throw AcessoNegadoException('Acesso negado', e);
+        }
+      }
 
       var confirmModel = await _usuarioRepository.confirmLogin();
       prefs.registerAccessToken(confirmModel.accessToken);
       SecureStorageRepository().registerRefreshToken(confirmModel.accessToken);
+      final dadosUsuario =
+          await _usuarioRepository.recuperarDadosUsuarioLogado();
+      await prefs.registerDadosUsuario(dadosUsuario);
     } on PlatformException catch (e) {
       print('Erro ao fazer login no Firebase $e');
       rethrow;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 403) {
+        throw AcessoNegadoException(e.response?.data['mensagem'], e);
+      } else {
+        rethrow;
+      }
     } catch (e) {
       print('Erro ao fazer login $e');
       rethrow;

@@ -1,14 +1,16 @@
 import 'package:cuidapet/app/core/rest_client/rest_client.dart';
 import 'package:cuidapet/app/core/rest_client/rest_client_dio.dart';
-import 'package:cuidapet/app/modules/login/login_store.dart';
 import 'package:cuidapet/app/shared/components/facebook_button.dart';
 import 'package:cuidapet/app/shared/theme_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage();
@@ -16,7 +18,7 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends ModularState<LoginPage, LoginStore> {
+class _LoginPageState extends ModularState<LoginPage, LoginController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +62,11 @@ class _LoginPageState extends ModularState<LoginPage, LoginStore> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
+        key: controller.formKey,
         child: Column(
           children: <Widget>[
             TextFormField(
+              controller: controller.loginController,
               decoration: InputDecoration(
                 labelText: 'Login',
                 labelStyle: TextStyle(
@@ -73,42 +77,49 @@ class _LoginPageState extends ModularState<LoginPage, LoginStore> {
                   gapPadding: 0,
                 ),
               ),
+              validator: (String? value) {
+                if (value == null) {
+                  return 'Login obrigatório';
+                }
+                return null;
+              },
             ),
             SizedBox(
               height: 16,
             ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Senha',
-                labelStyle: TextStyle(
-                  fontSize: 15,
+            Observer(builder: (_) {
+              return TextFormField(
+                controller: controller.senhaController,
+                obscureText: controller.mostraSenha,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  labelStyle: TextStyle(
+                    fontSize: 15,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    gapPadding: 0,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.lock),
+                    onPressed: () => controller.mostrarSenhaUsuario(),
+                  ),
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  gapPadding: 0,
-                ),
-              ),
-            ),
+                validator: (String? value) {
+                  if (value == null) {
+                    return 'Senha obrigatória';
+                  } else if (value.length < 6) {
+                    return 'Senha precisa ter pelo menos 6 caracteres';
+                  }
+                  return null;
+                },
+              );
+            }),
             Container(
               width: ScreenUtil().screenWidth,
               padding: EdgeInsets.all(8),
               child: ElevatedButton(
-                  onPressed: () async {
-                    // await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    //     email: 'leonardohkt@gmail.com', password: '123456');
-                    // FacebookLogin().logIn(['public_profile', 'email']);
-                    // final LoginResult result =
-                    // await FacebookAuth.instance.login();
-                    // RestClientDio()
-                    //     .get('https://viacep.com.br/ws/01001000/json/')
-                    //     .then((value) => print(value.data));
-
-                    FirebaseMessaging _firebaseMessaging =
-                        FirebaseMessaging.instance;
-
-                    _firebaseMessaging.requestPermission();
-                    print(await _firebaseMessaging.getToken());
-                  },
+                  onPressed: () => controller.login(),
                   style: ElevatedButton.styleFrom(
                     primary: ThemeUtils.primaryColor,
                     shape: RoundedRectangleBorder(
@@ -153,7 +164,9 @@ class _LoginPageState extends ModularState<LoginPage, LoginStore> {
                 ],
               ),
             ),
-            FacebookButton(),
+            FacebookButton(onTap: () {
+              controller.facebookLogin();
+            }),
             TextButton(
               onPressed: () {},
               child: Text(

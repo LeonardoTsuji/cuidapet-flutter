@@ -1,4 +1,5 @@
 import 'package:cuidapet/app/modules/home/home_store.dart';
+import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -19,8 +20,13 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: Observer(
-        builder: (context) => Text('${store.counter}'),
+      body: Column(
+        children: <Widget>[
+          TextButton(
+            child: Text('Logout'),
+            onPressed: () async => (await SharedPrefsRepository.instance),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

@@ -44,8 +44,9 @@ dependencies:
   dio: ^4.0.0
   json_annotation: ^4.0.0
   shared_preferences: ^2.0.6
-  flutter_secure_storage: ^4.2.1
   firebase_messaging: ^10.0.4
+  flutter_secure_storage: ^4.2.1
+  asuka: ^2.0.0-nullsafety.3
 
 dev_dependencies:
   build_runner: ^2.0.6
