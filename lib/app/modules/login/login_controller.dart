@@ -1,11 +1,9 @@
+import 'package:asuka/snackbars/asuka_snack_bar.dart';
 import 'package:cuidapet/app/core/exceptions/cuidapet_exceptions.dart';
 import 'package:cuidapet/app/services/usuario_services.dart';
 import 'package:cuidapet/app/shared/components/loading_indicator.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:get/get.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_controller.g.dart';
@@ -33,37 +31,39 @@ abstract class _LoginControllerBase with Store {
   Future<void> login() async {
     if (formKey.currentState == null) return;
     if (formKey.currentState!.validate()) {
+      var loading;
       try {
-        LoadingIndicator.show();
+        loading = LoadingIndicator.show();
         await _usuarioService.login(false,
             email: loginController.text, password: senhaController.text);
-        LoadingIndicator.hide();
+        LoadingIndicator.hide(loading);
         Modular.to.pushReplacementNamed('/');
       } on AcessoNegadoException catch (e) {
-        LoadingIndicator.hide();
+        LoadingIndicator.hide(loading);
         print(e);
-        Get.snackbar('Erro', 'Login e senha inválidos');
+        AsukaSnackbar.warning("Login e senha inválidos").show();
       } catch (e) {
-        LoadingIndicator.hide();
-        Get.snackbar('Erro', 'Erro ao realizar login');
+        LoadingIndicator.hide(loading);
+        AsukaSnackbar.warning("Erro ao realizar login").show();
       }
     }
   }
 
   @action
   Future<void> facebookLogin() async {
+    var loading;
     try {
-      LoadingIndicator.show();
+      loading = LoadingIndicator.show();
       await _usuarioService.login(true);
-      LoadingIndicator.hide();
+      LoadingIndicator.hide(loading);
       Modular.to.pushReplacementNamed('/');
     } on AcessoNegadoException catch (e) {
       print(e);
-      LoadingIndicator.hide();
-      Get.snackbar('Erro', 'Login e senha inválidos');
+      LoadingIndicator.hide(loading);
+      AsukaSnackbar.warning("Login e senha inválidos").show();
     } catch (e) {
-      LoadingIndicator.hide();
-      Get.snackbar('Erro', 'Erro ao realizar login');
+      LoadingIndicator.hide(loading);
+      AsukaSnackbar.warning("Erro ao realizar login").show();
     }
   }
 }

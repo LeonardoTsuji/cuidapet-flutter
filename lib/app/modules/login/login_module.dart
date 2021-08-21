@@ -1,3 +1,4 @@
+import 'package:cuidapet/app/modules/login/cadastro/cadastro_module.dart';
 import 'package:cuidapet/app/modules/login/login_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -12,5 +13,6 @@ class LoginModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(Modular.initialRoute, child: (_, args) => LoginPage()),
+    ModuleRoute('/cadastro', module: CadastroModule())
   ];
 }

@@ -1,23 +1,28 @@
-import 'package:cuidapet/app/shared/components/facebook_button.dart';
-import 'package:cuidapet/app/shared/components/validates.dart';
+import 'package:cuidapet/app/modules/login/cadastro/cadastro_controller.dart';
 import 'package:cuidapet/app/shared/theme_utils.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'login_controller.dart';
-
-class LoginPage extends StatefulWidget {
-  const LoginPage();
+class CadastroPage extends StatefulWidget {
+  final String title;
+  const CadastroPage({Key? key, this.title = 'CadastroPage'}) : super(key: key);
   @override
-  _LoginPageState createState() => _LoginPageState();
+  CadastroPageState createState() => CadastroPageState();
 }
 
-class _LoginPageState extends ModularState<LoginPage, LoginController> {
+class CadastroPageState extends ModularState<CadastroPage, CadastroController> {
+  final CadastroController store = Modular.get();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Text('Cadastrar usuário'),
+      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: ThemeUtils.primaryColor,
       body: Container(
@@ -36,7 +41,6 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: ScreenUtil().statusBarHeight + 30),
               width: double.infinity,
               child: Column(
                 children: <Widget>[
@@ -78,8 +82,6 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
               validator: (String? value) {
                 if (value == null) {
                   return 'Login obrigatório';
-                } else if (!Validate.emailValid(value)) {
-                  return 'Login precisa ser um e-mail';
                 }
                 return null;
               },
@@ -115,11 +117,44 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                 },
               );
             }),
+            SizedBox(
+              height: 20,
+            ),
+            Observer(builder: (_) {
+              return TextFormField(
+                controller: controller.senhaConfirmaController,
+                obscureText: controller.mostraConfirmaSenha,
+                decoration: InputDecoration(
+                  labelText: 'Confirmar senha',
+                  labelStyle: TextStyle(
+                    fontSize: 15,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    gapPadding: 0,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.lock),
+                    onPressed: () => controller.mostrarConfirmaSenhaUsuario(),
+                  ),
+                ),
+                validator: (String? value) {
+                  if (value == null) {
+                    return 'Confirma senha obrigatória';
+                  } else if (value.length < 6) {
+                    return 'Confirmar senha precisa ter pelo menos 6 caracteres';
+                  } else if (value != controller.senhaController.text) {
+                    return 'Senha e confirma senha não são iguais';
+                  }
+                  return null;
+                },
+              );
+            }),
             Container(
               width: ScreenUtil().screenWidth,
               padding: EdgeInsets.all(8),
               child: ElevatedButton(
-                  onPressed: () => controller.login(),
+                  onPressed: () => controller.cadastrarUsuario(),
                   style: ElevatedButton.styleFrom(
                     primary: ThemeUtils.primaryColor,
                     shape: RoundedRectangleBorder(
@@ -127,55 +162,13 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
                     ),
                   ),
                   child: Text(
-                    'Entrar',
+                    'Cadastrar',
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,
                     ),
                   )),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Divider(
-                      color: ThemeUtils.primaryColor,
-                      thickness: 1,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'ou',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: ThemeUtils.primaryColor,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: ThemeUtils.primaryColor,
-                      thickness: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            FacebookButton(onTap: () {
-              controller.facebookLogin();
-            }),
-            TextButton(
-              onPressed: () => Modular.to.pushNamed('/login/cadastro'),
-              child: Text(
-                'Cadastre-se',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            )
           ],
         ),
       ),

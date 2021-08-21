@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final apiKey = DotEnv().env['apiKey'] ?? '';
+    final apiKey = dotenv.env['apiKey'] ?? '';
 
     if (options.extra.containsKey('auth_required')) {
       options.queryParameters.addAll({

@@ -9,11 +9,9 @@ class CustomDio {
   late Dio _dio;
 
   BaseOptions options = BaseOptions(
-    baseUrl: DotEnv().env['base_url'] ?? '',
-    connectTimeout: 30000,
-    // connectTimeout: int.parse(DotEnv().env['dio_connectTimeout']),
-    receiveTimeout: 30000,
-    // receiveTimeout: int.parse(DotEnv().env['dioreceiveTimeout']),
+    baseUrl: dotenv.env['base_url'] ?? '',
+    connectTimeout: int.parse(dotenv.env['dio_connectTimeout'] ?? '30000'),
+    receiveTimeout: int.parse(dotenv.env['dioreceiveTimeout'] ?? '30000'),
   );
 
   CustomDio._() {
@@ -22,7 +20,7 @@ class CustomDio {
 
   CustomDio._auth() {
     _dio = Dio(options);
-    // _dio.interceptors.add(AuthInterceptorWrapper());
+    _dio.interceptors.add(AuthInterceptorWrapper());
   }
 
   static Dio get instance {
@@ -36,32 +34,45 @@ class CustomDio {
   }
 }
 
-// class AuthInterceptorWrapper extends InterceptorsWrapper {
-//   @override
-//   Future onRequest(RequestOptions options) async {
-//     final prefs = await SharedPrefsRepository.instance;
+class AuthInterceptorWrapper extends InterceptorsWrapper {
+  @override
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final prefs = await SharedPrefsRepository.instance;
 
-//     // options.headers['Authorization'] = prefs!.accessToken;
+    options.headers['Authorization'] = prefs.accessToken;
 
-//     if (DotEnv().env['profile'] == 'dev') {
-//       print('############## Request Log ##############');
-//       print('url ${options.uri}');
-//       print('method ${options.method}');
-//       print('data ${options.data}');
-//       print('headers ${options.headers}');
-//     }
-//   }
+    if (dotenv.env['profile'] == 'dev') {
+      print('############## Request Log ##############');
+      print('url ${options.uri}');
+      print('method ${options.method}');
+      print('data ${options.data}');
+      print('headers ${options.headers}');
+    }
 
-//   @override
-//   Future onResponse(Response response) async {
-//     if (DotEnv().env['profile'] == 'dev') {
-//       print('############## Response Log ##############');
-//       print('data ${response.data}');
-//     }
-//   }
+    handler.next(options);
+  }
 
-//   @override
-//   Future onError(DioError err) async {
-//     print('error: ${err.response}');
-//   }
-// }
+  @override
+  void onResponse(
+    Response response,
+    ResponseInterceptorHandler handler,
+  ) {
+    if (dotenv.env['profile'] == 'dev') {
+      print('############## Response Log ##############');
+      print('data ${response.data}');
+    }
+
+    handler.next(response);
+  }
+
+  @override
+  void onError(
+    DioError err,
+    ErrorInterceptorHandler handler,
+  ) {
+    print('error: ${err.response}');
+  }
+}

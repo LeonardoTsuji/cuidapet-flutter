@@ -27,6 +27,10 @@ class SharedPrefsRepository {
     await prefs?.setString(_DEVICE_ID, deviceId);
   }
 
+  Future<void> clear() async {
+    await prefs?.clear();
+  }
+
   Future<void> registerDadosUsuario(UsuarioModel usuario) async {
     await prefs?.setString(_DADOS_USUARIO, jsonEncode(usuario));
   }

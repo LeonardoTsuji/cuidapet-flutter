@@ -11,7 +11,7 @@ class AuthInterceptorWrapper extends InterceptorsWrapper {
     final prefs = await SharedPrefsRepository.instance;
     options.headers['Authorization'] = prefs.accessToken;
 
-    if (DotEnv().env['profile'] == 'dev') {
+    if (dotenv.env['profile'] == 'dev') {
       print('############ Request Log ############');
       print('url ${options.uri}');
       print('method ${options.method}');
@@ -25,7 +25,7 @@ class AuthInterceptorWrapper extends InterceptorsWrapper {
     Response response,
     ResponseInterceptorHandler handler,
   ) {
-    if (DotEnv().env['profile'] == 'dev') {
+    if (dotenv.env['profile'] == 'dev') {
       print('############ Response Log ############');
       print('response ${response.data}');
     }

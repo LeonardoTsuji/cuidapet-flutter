@@ -1,5 +1,6 @@
 import 'package:cuidapet/app/core/push_notification/push_messaging_config.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,6 +21,5 @@ Future<void> main() async {
 }
 
 Future<void> loadEnv() async {
-  const isProduction = bool.fromEnvironment('dart.vm.product');
-  await DotEnv().load(fileName: isProduction ? '.env' : '.env_dev');
+  await dotenv.load(fileName: kReleaseMode ? '.env' : '.env_dev');
 }
