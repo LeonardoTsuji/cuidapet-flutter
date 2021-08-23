@@ -1,3 +1,4 @@
+import 'package:cuidapet/app/core/database/connection.dart';
 import 'package:cuidapet/app/shared/components/facebook_button.dart';
 import 'package:cuidapet/app/shared/components/validates.dart';
 import 'package:cuidapet/app/shared/theme_utils.dart';
@@ -15,6 +16,18 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends ModularState<LoginPage, LoginController> {
+  @override
+  void initState() {
+    super.initState();
+    testeConnection();
+  }
+
+  Future<void> testeConnection() async {
+    var db = await Connection().instance;
+    var resultado = await db.rawQuery('SELECT * FROM endereco');
+    print(resultado);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

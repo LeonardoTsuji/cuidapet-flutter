@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:cuidapet/app/models/usuario_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsRepository {
@@ -29,6 +31,7 @@ class SharedPrefsRepository {
 
   Future<void> clear() async {
     await prefs?.clear();
+    await Modular.to.pushNamedAndRemoveUntil('/', ModalRoute.withName('/'));
   }
 
   Future<void> registerDadosUsuario(UsuarioModel usuario) async {

@@ -16,6 +16,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
   @override
   void initState() {
     super.initState();
+    controller.initPage();
   }
 
   @override
@@ -23,6 +24,12 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(Modular.get<AuthStore>().usuarioLogado?.email ?? ''),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.location_on),
+            onPressed: () => Modular.to.pushNamed('/home/enderecos'),
+          )
+        ],
       ),
       body: Column(
         children: <Widget>[

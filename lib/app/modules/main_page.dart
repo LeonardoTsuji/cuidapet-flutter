@@ -5,8 +5,15 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-class MainPage extends StatelessWidget {
-  MainPage() {
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       final authStore = Modular.get<AuthStore>();
       final isLogged = await authStore.isLogged();

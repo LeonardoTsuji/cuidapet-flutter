@@ -1,7 +1,10 @@
+import 'package:cuidapet/app/core/database/connection_adm.dart';
 import 'package:cuidapet/app/core/rest_client/rest_client_dio.dart';
 import 'package:cuidapet/app/modules/home/home_module.dart';
 import 'package:cuidapet/app/modules/main_page.dart';
+import 'package:cuidapet/app/repository/endereco_repository.dart';
 import 'package:cuidapet/app/repository/usuario_repository.dart';
+import 'package:cuidapet/app/services/endereco_services.dart';
 import 'package:cuidapet/app/services/usuario_services.dart';
 import 'package:cuidapet/app/shared/auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -12,6 +15,10 @@ class AppModule extends Module {
   @override
   final List<Bind> binds = [
     Bind(
+      (i) => ConnectionAdm(),
+      isLazy: false,
+    ),
+    Bind(
       (i) => AuthStore(),
     ),
     Bind(
@@ -21,8 +28,14 @@ class AppModule extends Module {
       (i) => UsuarioService(i()),
     ),
     Bind(
+      (i) => EnderecoRepository(),
+    ),
+    Bind(
+      (i) => EnderecoService(i()),
+    ),
+    Bind(
       (i) => RestClientDio(),
-    )
+    ),
   ];
 
   @override

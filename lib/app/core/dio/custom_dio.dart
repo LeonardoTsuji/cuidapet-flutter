@@ -1,3 +1,4 @@
+import 'package:cuidapet/app/repository/secure_storage_repository.dart';
 import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -69,10 +70,39 @@ class AuthInterceptorWrapper extends InterceptorsWrapper {
   }
 
   @override
-  void onError(
+  Future onError(
     DioError err,
     ErrorInterceptorHandler handler,
-  ) {
+  ) async {
+    print('############## Response Error ##############');
     print('error: ${err.response}');
+
+    if (err.response?.statusCode == 403 || err.response?.statusCode == 401) {
+      await _refreshToken();
+      print('############## Token atualizado ##############');
+      final req = err.requestOptions;
+      return CustomDio.authInstance.fetch(req);
+    }
+  }
+
+  Future<void> _refreshToken() async {
+    final prefs = await SharedPrefsRepository.instance;
+    final security = SecureStorageRepository();
+
+    try {
+      final refreshToken = await security.refreshToken;
+      final accessToken = prefs.accessToken;
+
+      var result = await CustomDio.instance.put('/login/refresh', data: {
+        'token': accessToken,
+        'refresh_token': refreshToken,
+      });
+
+      await prefs.registerAccessToken(result.data['access_token']);
+      await security.registerRefreshToken(result.data['refresh_token']);
+    } catch (e) {
+      print(e);
+      prefs.clear();
+    }
   }
 }
