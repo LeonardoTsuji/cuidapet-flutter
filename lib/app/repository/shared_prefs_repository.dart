@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cuidapet/app/models/endereco_model.dart';
 import 'package:cuidapet/app/models/usuario_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -9,6 +10,7 @@ class SharedPrefsRepository {
   static const _ACCESS_TOKEN = '/ACCESS_TOKEN/';
   static const _DEVICE_ID = '/DEVICE_ID/';
   static const _DADOS_USUARIO = '/_DADOS_USUARIO/';
+  static const _ENDERECO_SELECIONADO = '/_ENDERECO_SELECIONADO/';
 
   static SharedPreferences? prefs;
   static SharedPrefsRepository? _instanceRepository;
@@ -42,6 +44,11 @@ class SharedPrefsRepository {
 
   String? get deviceId => prefs?.getString(_DEVICE_ID);
 
+  EnderecoModel? get enderecoSelecionado {
+    var enderecoJson = prefs?.getString(_ENDERECO_SELECIONADO);
+    return EnderecoModel.fromJson(enderecoJson ?? '{}');
+  }
+
   UsuarioModel? get dadosUsuario {
     if (prefs?.containsKey(_DADOS_USUARIO) ?? false) {
       return UsuarioModel.fromJson(
@@ -49,5 +56,11 @@ class SharedPrefsRepository {
     }
 
     return null;
+  }
+
+  Future<void> registrarEnderecoSelecionado(EnderecoModel? endereco) async {
+    if (endereco?.endereco != null) {
+      await prefs?.setString(_ENDERECO_SELECIONADO, endereco!.toJson());
+    }
   }
 }

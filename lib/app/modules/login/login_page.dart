@@ -1,4 +1,5 @@
 import 'package:cuidapet/app/core/database/connection.dart';
+import 'package:cuidapet/app/shared/components/cuidapet_textformfield.dart';
 import 'package:cuidapet/app/shared/components/facebook_button.dart';
 import 'package:cuidapet/app/shared/components/validates.dart';
 import 'package:cuidapet/app/shared/theme_utils.dart';
@@ -19,13 +20,6 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
   @override
   void initState() {
     super.initState();
-    testeConnection();
-  }
-
-  Future<void> testeConnection() async {
-    var db = await Connection().instance;
-    var resultado = await db.rawQuery('SELECT * FROM endereco');
-    print(resultado);
   }
 
   @override
@@ -75,19 +69,10 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
         key: controller.formKey,
         child: Column(
           children: <Widget>[
-            TextFormField(
+            CuidapetTextFormField(
               controller: controller.loginController,
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Login',
-                labelStyle: TextStyle(
-                  fontSize: 15,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  gapPadding: 0,
-                ),
-              ),
+              label: 'Login',
               validator: (String? value) {
                 if (value == null) {
                   return 'Login obrigatório';
@@ -101,22 +86,13 @@ class _LoginPageState extends ModularState<LoginPage, LoginController> {
               height: 16,
             ),
             Observer(builder: (_) {
-              return TextFormField(
+              return CuidapetTextFormField(
                 controller: controller.senhaController,
                 obscureText: controller.mostraSenha,
-                decoration: InputDecoration(
-                  labelText: 'Senha',
-                  labelStyle: TextStyle(
-                    fontSize: 15,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    gapPadding: 0,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.lock),
-                    onPressed: () => controller.mostrarSenhaUsuario(),
-                  ),
+                label: 'Senha',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.lock),
+                  onPressed: () => controller.mostrarSenhaUsuario(),
                 ),
                 validator: (String? value) {
                   if (value == null) {

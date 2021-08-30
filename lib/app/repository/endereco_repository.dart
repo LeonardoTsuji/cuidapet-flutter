@@ -35,4 +35,12 @@ class EnderecoRepository {
 
     return response.predictions;
   }
+
+  Future<PlacesDetailsResponse> recuperarDetalhesEnderecoGooglePlaces(
+      String placeId) async {
+    final places = GoogleMapsPlaces(apiKey: dotenv.env['google_api_key']);
+    var response = await places.getDetailsByPlaceId(placeId);
+
+    return response;
+  }
 }

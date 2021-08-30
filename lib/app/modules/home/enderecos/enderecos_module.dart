@@ -8,12 +8,15 @@ class EnderecosModule extends Module {
   @override
   final List<Bind> binds = [
     Bind.lazySingleton((i) => EnderecosController(i())),
-    Bind.lazySingleton((i) => DetalheController()),
+    Bind.lazySingleton((i) => DetalheController(i())),
   ];
 
   @override
   final List<ModularRoute> routes = [
     ChildRoute('/', child: (_, args) => EnderecosPage()),
-    ChildRoute('/detalhe', child: (_, args) => DetalhePage()),
+    ChildRoute('/detalhe',
+        child: (_, args) => DetalhePage(
+              enderecoModel: args.data,
+            )),
   ];
 }

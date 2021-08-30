@@ -1,10 +1,16 @@
 import 'package:cuidapet/app/core/database/connection_adm.dart';
 import 'package:cuidapet/app/core/rest_client/rest_client_dio.dart';
+import 'package:cuidapet/app/modules/agendamento/agendamento_module.dart';
+import 'package:cuidapet/app/modules/estabelecimento/estabelecimento_module.dart';
 import 'package:cuidapet/app/modules/home/home_module.dart';
 import 'package:cuidapet/app/modules/main_page.dart';
+import 'package:cuidapet/app/repository/agendamento_repository.dart';
 import 'package:cuidapet/app/repository/endereco_repository.dart';
+import 'package:cuidapet/app/repository/fornecedor_repository.dart';
 import 'package:cuidapet/app/repository/usuario_repository.dart';
+import 'package:cuidapet/app/services/agendamento_servico.dart';
 import 'package:cuidapet/app/services/endereco_services.dart';
+import 'package:cuidapet/app/services/fornecedor_service.dart';
 import 'package:cuidapet/app/services/usuario_services.dart';
 import 'package:cuidapet/app/shared/auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -17,6 +23,9 @@ class AppModule extends Module {
     Bind(
       (i) => ConnectionAdm(),
       isLazy: false,
+    ),
+    Bind(
+      (i) => RestClientDio(),
     ),
     Bind(
       (i) => AuthStore(),
@@ -34,7 +43,16 @@ class AppModule extends Module {
       (i) => EnderecoService(i()),
     ),
     Bind(
-      (i) => RestClientDio(),
+      (i) => FornecedorRepository(),
+    ),
+    Bind(
+      (i) => FornecedorService(i()),
+    ),
+    Bind(
+      (i) => AgendamentoRepository(),
+    ),
+    Bind(
+      (i) => AgendamentoService(i()),
     ),
   ];
 
@@ -51,6 +69,14 @@ class AppModule extends Module {
     ModuleRoute(
       '/home',
       module: HomeModule(),
+    ),
+    ModuleRoute(
+      '/estabelecimento',
+      module: EstabelecimentoModule(),
+    ),
+    ModuleRoute(
+      '/agendamento',
+      module: AgendamentoModule(),
     ),
   ];
 }

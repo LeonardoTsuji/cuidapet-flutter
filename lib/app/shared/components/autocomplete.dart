@@ -9,6 +9,7 @@ class CustomAutocomplete extends StatelessWidget {
   final Function suggestionsCallback;
   final Widget? leading;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
 
   const CustomAutocomplete({
     Key? key,
@@ -18,6 +19,7 @@ class CustomAutocomplete extends StatelessWidget {
     required this.suggestionsCallback,
     this.leading,
     this.controller,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -29,6 +31,7 @@ class CustomAutocomplete extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: TypeAheadField(
           textFieldConfiguration: TextFieldConfiguration(
+            focusNode: focusNode,
             controller: controller,
             decoration: InputDecoration(
               hintText: hintText,
