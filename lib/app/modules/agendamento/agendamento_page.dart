@@ -51,6 +51,10 @@ class AgendamentoPageState
                 );
               }),
               TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      ThemeUtils.primaryColor!),
+                ),
                 onPressed: () async {
                   var horario = await showTimePicker(
                       context: context,

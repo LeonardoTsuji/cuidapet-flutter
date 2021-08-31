@@ -39,4 +39,10 @@ class UsuarioRepository {
       'senha': senha,
     });
   }
+
+  Future<UsuarioModel> atualizarImagemPerfil(String urlImagem) {
+    return CustomDio.authInstance.put('/usuario/avatar', data: {
+      'url_avatar': urlImagem,
+    }).then((value) => UsuarioModel.fromJson(value.data));
+  }
 }

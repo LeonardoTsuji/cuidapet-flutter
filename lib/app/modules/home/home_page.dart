@@ -1,7 +1,7 @@
 import 'package:cuidapet/app/models/categorias_model.dart';
 import 'package:cuidapet/app/models/fornecedor_busca_model.dart';
+import 'package:cuidapet/app/modules/home/components/home_drawer.dart';
 import 'package:cuidapet/app/modules/home/home_controller.dart';
-import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:cuidapet/app/shared/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -114,7 +114,7 @@ class _HomePageState extends ModularState<HomePage, HomeController> {
       ),
     );
     return Scaffold(
-      drawer: Drawer(),
+      drawer: HomeDrawer(),
       backgroundColor: Colors.grey[100]!,
       appBar: appBar,
       body: RefreshIndicator(
