@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cuidapet/app/models/endereco_model.dart';
 import 'package:cuidapet/app/models/usuario_model.dart';
+import 'package:cuidapet/app/services/endereco_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,6 +34,7 @@ class SharedPrefsRepository {
 
   Future<void> clear() async {
     await prefs?.clear();
+    Modular.get<EnderecoService>().limparEnderecosCadastrados();
     await Modular.to.pushNamedAndRemoveUntil('/', ModalRoute.withName('/'));
   }
 

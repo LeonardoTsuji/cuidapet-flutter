@@ -1,6 +1,5 @@
-import 'package:cuidapet/app/models/usuario_model.dart';
-import 'package:flutter/material.dart';
 import 'package:asuka/asuka.dart' as asuka;
+import 'package:flutter/material.dart';
 
 class LoadingIndicator {
   static OverlayEntry show() {

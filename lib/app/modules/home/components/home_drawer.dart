@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:asuka/snackbars/asuka_snack_bar.dart';
 import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:cuidapet/app/services/usuario_services.dart';
 import 'package:cuidapet/app/shared/auth_store.dart';
+import 'package:cuidapet/app/shared/components/loading_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -80,7 +82,11 @@ class HomeDrawer extends Drawer {
                             title: Text('Chats'),
                           ),
                           ListTile(
-                            // onTap: () =>,
+                            onTap: () async {
+                              final prefs =
+                                  await SharedPrefsRepository.instance;
+                              prefs.clear();
+                            },
                             leading: Icon(Icons.exit_to_app),
                             title: Text('Sair'),
                           ),
@@ -94,23 +100,32 @@ class HomeDrawer extends Drawer {
         );
 
   static Future<void> _alterarImagemPerfil() async {
+    var loading;
+    loading = LoadingIndicator.show();
+
     var image = await ImagePicker().pickImage(source: ImageSource.camera);
-    var reference = FirebaseStorage.instance.ref();
-    reference
+    var reference = FirebaseStorage.instance
+        .ref()
         .child('/perfil/${DateTime.now().millisecondsSinceEpoch.toString()}');
 
     try {
-      await reference.putFile(File(image!.path));
+      var uploadTask = reference.putFile(File(image!.path));
+      var downloadUrl = (await uploadTask);
 
-      var url = await reference.getDownloadURL();
+      var url = await downloadUrl.ref.getDownloadURL();
+
       var novoUsuario =
           await Modular.get<UsuarioService>().atualizarImagemPerfil(url);
       final prefs = await SharedPrefsRepository.instance;
 
       await prefs.registerDadosUsuario(novoUsuario);
       await Modular.get<AuthStore>().loadUsuario();
+
+      LoadingIndicator.hide(loading);
     } on FirebaseException catch (e) {
       print(e);
+      LoadingIndicator.hide(loading);
+      AsukaSnackbar.warning("Erro ao trocar imagem de perfil").show();
     }
   }
 }
