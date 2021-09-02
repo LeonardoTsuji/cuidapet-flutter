@@ -74,10 +74,13 @@ class HomeDrawer extends Drawer {
                         shrinkWrap: true,
                         children: <Widget>[
                           ListTile(
+                            onTap: () =>
+                                Modular.to.pushNamed('/meus-agendamentos'),
                             leading: Icon(Icons.receipt),
                             title: Text('Meus agendamentos'),
                           ),
                           ListTile(
+                            onTap: () => Modular.to.pushNamed('/chat-lista'),
                             leading: Icon(Icons.chat),
                             title: Text('Chats'),
                           ),

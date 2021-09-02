@@ -1,9 +1,11 @@
 import 'package:cuidapet/app/core/database/connection_adm.dart';
 import 'package:cuidapet/app/core/rest_client/rest_client_dio.dart';
 import 'package:cuidapet/app/modules/agendamento/agendamento_module.dart';
+import 'package:cuidapet/app/modules/chat_lista/chat_lista_module.dart';
 import 'package:cuidapet/app/modules/estabelecimento/estabelecimento_module.dart';
 import 'package:cuidapet/app/modules/home/home_module.dart';
 import 'package:cuidapet/app/modules/main_page.dart';
+import 'package:cuidapet/app/modules/meus_agendamentos/meus_agendamentos_module.dart';
 import 'package:cuidapet/app/repository/agendamento_repository.dart';
 import 'package:cuidapet/app/repository/endereco_repository.dart';
 import 'package:cuidapet/app/repository/fornecedor_repository.dart';
@@ -77,6 +79,14 @@ class AppModule extends Module {
     ModuleRoute(
       '/agendamento',
       module: AgendamentoModule(),
+    ),
+    ModuleRoute(
+      '/meus-agendamentos',
+      module: MeusAgendamentosModule(),
+    ),
+    ModuleRoute(
+      '/chat-lista',
+      module: ChatListaModule(),
     ),
   ];
 }

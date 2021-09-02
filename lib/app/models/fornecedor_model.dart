@@ -9,21 +9,21 @@ class FornecedorModel {
   int id;
   String nome;
   String logo;
-  String endereco;
-  String telefone;
-  double latitude;
-  double longitude;
-  CategoriaModel categoria;
+  String? endereco;
+  String? telefone;
+  double? latitude;
+  double? longitude;
+  CategoriaModel? categoria;
 
   FornecedorModel({
     required this.id,
     required this.nome,
     required this.logo,
-    required this.endereco,
-    required this.telefone,
-    required this.latitude,
-    required this.longitude,
-    required this.categoria,
+    this.endereco,
+    this.telefone,
+    this.latitude,
+    this.longitude,
+    this.categoria,
   });
 
   factory FornecedorModel.fromJson(Map<String, dynamic> json) =>
