@@ -35,7 +35,7 @@ class SharedPrefsRepository {
   Future<void> clear() async {
     await prefs?.clear();
     Modular.get<EnderecoService>().limparEnderecosCadastrados();
-    await Modular.to.pushNamedAndRemoveUntil('/', ModalRoute.withName('/'));
+    Modular.to.pushNamedAndRemoveUntil('/', ModalRoute.withName('/'));
   }
 
   Future<void> registerDadosUsuario(UsuarioModel usuario) async {

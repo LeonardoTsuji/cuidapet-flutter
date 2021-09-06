@@ -17,6 +17,7 @@ class ChatPage extends StatefulWidget {
 
 class ChatPageState extends ModularState<ChatPage, ChatController> {
   final ChatModel model;
+  final ScrollController _scroolController = ScrollController();
 
   ChatPageState(this.model);
 
@@ -41,7 +42,13 @@ class ChatPageState extends ModularState<ChatPage, ChatController> {
 
               if (msgs == null) return SizedBox.shrink();
 
+              Future.delayed(
+                  Duration.zero,
+                  () => (_scroolController
+                      .jumpTo(_scroolController.position.maxScrollExtent)));
+
               return ListView.builder(
+                  controller: _scroolController,
                   shrinkWrap: true,
                   itemCount: msgs.length,
                   itemBuilder: (_, index) {
