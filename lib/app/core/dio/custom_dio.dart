@@ -1,7 +1,11 @@
+import 'package:asuka/snackbars/asuka_snack_bar.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:cuidapet/app/repository/secure_storage_repository.dart';
 import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:synchronized/synchronized.dart' as syncronized;
 
 class CustomDio {
   static CustomDio? _simpleInstance;
@@ -36,6 +40,8 @@ class CustomDio {
 }
 
 class AuthInterceptorWrapper extends InterceptorsWrapper {
+  syncronized.Lock lock = syncronized.Lock();
+
   @override
   Future<void> onRequest(
     RequestOptions options,
@@ -77,11 +83,33 @@ class AuthInterceptorWrapper extends InterceptorsWrapper {
     print('############## Response Error ##############');
     print('error: ${err.response}');
 
-    if (err.response?.statusCode == 403 || err.response?.statusCode == 401) {
-      await _refreshToken();
-      print('############## Token atualizado ##############');
-      final req = err.requestOptions;
-      return CustomDio.authInstance.fetch(req);
+    if (err.type == DioErrorType.connectTimeout ||
+        err.type == DioErrorType.receiveTimeout) {
+      AsukaSnackbar.warning(
+              "O servidor não está acessível, verifique sua conexão com a internet e tente novamente")
+          .show();
+    } else if (err.type == DioErrorType.response) {
+      if (err.response?.statusCode == 403 || err.response?.statusCode == 401) {
+        await _refreshToken();
+        print('############## Token atualizado ##############');
+        final req = err.requestOptions;
+        CustomDio.authInstance.fetch(req);
+      }
+    } else if (err.type == DioErrorType.other) {
+      if (err.message.contains('Network is unreachable')) {
+        await lock.synchronized(() async {
+          final connectionStatus = await Connectivity().checkConnectivity();
+
+          if (connectionStatus != ConnectivityResult.none) {
+            return null;
+          } else {
+            return await Modular.to.pushNamed('/connection-error');
+          }
+        });
+
+        final req = err.requestOptions;
+        CustomDio.authInstance.fetch(req);
+      }
     }
   }
 

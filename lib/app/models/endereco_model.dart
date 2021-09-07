@@ -17,25 +17,20 @@ class EnderecoModel {
 
   EnderecoModel.fromMap(Map<String, dynamic>? map) {
     if (map != null) {
-      id = map['id'].runtimeType == int ? map['id'] as int : null;
-      endereco = map['endereco'].runtimeType == String
-          ? map['endereco'] as String
-          : null;
-      latitude = map['latitude'].runtimeType == String ||
-              map['latitude'].runtimeType == double
-          ? (map['latitude'].runtimeType == String
+      id = map['id'] is int ? map['id'] as int : null;
+      endereco = map['endereco'] is String ? map['endereco'] as String : null;
+      latitude = map['latitude'] is String || map['latitude'] is double
+          ? (map['latitude'] is String
               ? double.parse(map['latitude'])
               : map['latitude'] as double)
           : null;
-      longitude = map['longitude'].runtimeType == String ||
-              map['longitude'].runtimeType == double
-          ? (map['longitude'].runtimeType == String
+      longitude = map['longitude'] is String || map['longitude'] is double
+          ? (map['longitude'] is String
               ? double.parse(map['longitude'])
               : map['longitude'] as double)
           : null;
-      complemento = map['complemento'].runtimeType == String
-          ? map['complemento'] as String
-          : null;
+      complemento =
+          map['complemento'] is String ? map['complemento'] as String : null;
     }
   }
 

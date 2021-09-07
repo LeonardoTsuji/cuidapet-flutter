@@ -1,5 +1,5 @@
+import 'package:cuidapet/app/core/connection/connection_error.dart';
 import 'package:cuidapet/app/core/database/connection_adm.dart';
-import 'package:cuidapet/app/core/rest_client/rest_client_dio.dart';
 import 'package:cuidapet/app/modules/agendamento/agendamento_module.dart';
 import 'package:cuidapet/app/modules/chat_lista/chat_lista_module.dart';
 import 'package:cuidapet/app/modules/estabelecimento/estabelecimento_module.dart';
@@ -25,9 +25,6 @@ class AppModule extends Module {
     Bind(
       (i) => ConnectionAdm(),
       isLazy: false,
-    ),
-    Bind(
-      (i) => RestClientDio(),
     ),
     Bind(
       (i) => AuthStore(),
@@ -88,5 +85,9 @@ class AppModule extends Module {
       '/chat-lista',
       module: ChatListaModule(),
     ),
+    ChildRoute(
+      '/connection-error',
+      child: (context, args) => ConnectionError(),
+    )
   ];
 }

@@ -104,6 +104,8 @@ class PushMessagingConfig {
         if (abrirChat) {
           await Modular.to.pushNamed('/chat-lista/chat', arguments: model);
         }
+      } else if (data['type'] == 'AU') {
+        Modular.to.pushNamed('meus-agendamentos');
       }
     }
   }

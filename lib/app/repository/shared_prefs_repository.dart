@@ -33,7 +33,10 @@ class SharedPrefsRepository {
   }
 
   Future<void> clear() async {
-    await prefs?.clear();
+    prefs?.remove(_ACCESS_TOKEN);
+    prefs?.remove(_DADOS_USUARIO);
+    prefs?.remove(_ENDERECO_SELECIONADO);
+
     Modular.get<EnderecoService>().limparEnderecosCadastrados();
     Modular.to.pushNamedAndRemoveUntil('/', ModalRoute.withName('/'));
   }

@@ -1,6 +1,12 @@
+import 'package:asuka/snackbars/asuka_snack_bar.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:cuidapet/app/core/dio/custom_dio.dart';
+import 'package:cuidapet/app/repository/secure_storage_repository.dart';
 import 'package:cuidapet/app/repository/shared_prefs_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:synchronized/synchronized.dart' as syncronized;
 
 class AuthInterceptorWrapper extends InterceptorsWrapper {
   @override
@@ -35,7 +41,8 @@ class AuthInterceptorWrapper extends InterceptorsWrapper {
   void onError(
     DioError err,
     ErrorInterceptorHandler handler,
-  ) {
+  ) async {
+    print('############ On Error ############');
     print('error: ${err.response}');
   }
 }
